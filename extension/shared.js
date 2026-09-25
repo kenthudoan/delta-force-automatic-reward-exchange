@@ -13,8 +13,10 @@
   const HOOK_EVENT = 'dfr:redeem-result'; // page-hook.js → content.js (trùng tên trong page-hook.js)
   const HOOK_PING_EVENT = 'dfr:hook-ping';
 
-  // Thời gian chờ giữa 2 code (ms). Không cho thấp hơn 3 giây để không spam máy chủ Garena.
-  const DELAY = Object.freeze({ min: 3000, max: 10000, step: 500, default: 5000 });
+  // Thời gian chờ giữa 2 code (ms). Tối thiểu 1.5 giây để vẫn tránh spam máy chủ Garena,
+  // nhưng đủ nhanh cho người dùng đổi nhiều code một lúc. Mặc định 3 giây.
+  // (Giảm từ 3s xuống 1.5s vì có người dùng cần đổi nhanh; tối đa 10s để tránh bị chặn.)
+  const DELAY = Object.freeze({ min: 1500, max: 10000, step: 500, default: 3000 });
 
   const MAX_ATTEMPTS = 3; // số lần thử tối đa cho một code khi gặp lỗi mạng
   const MAX_NETWORK_STREAK = 5; // lỗi mạng liên tiếp bấy nhiêu lần thì tự tạm dừng
@@ -23,6 +25,7 @@
   const SEND_TIMEOUT_MS = 5000; // bấm "Đổi" mà quá thời gian này trang chưa gửi request → thử lại
   const PAGE_LOCK_MS = 1500; // trang khóa nút "Đổi" 1 giây sau mỗi lần đổi (cộng thêm dự phòng)
   const MAX_LOGS = 1000;
+  const MAX_HISTORY = 30; // giữ tối đa 30 job đã chạy (cho popup tab "Lịch sử")
   const MIN_CODE_LENGTH = 6; // code thật ngắn nhất đã gặp: 6 ký tự (vd. RCA812)
   const MAX_CODE_LENGTH = 40;
 
@@ -66,6 +69,14 @@
    * Tách danh sách code thô. Mọi ký tự không phải chữ/số/-/_ đều là dấu phân cách
    * (dấu cách, xuống dòng, phẩy, chấm phẩy, hai chấm, |, /, emoji, ...).
    * - codes:      code sẽ được đổi, giữ nguyên hoa/thường (code phân biệt hoa/thường).
+   *               Mỗi code có thể kèm delay riêng theo cú pháp "CODE=DELAY" (giây):
+   *                 DFREWARD=5        -> code DFREWARD, delay 5.0s
+   *                 DFGIFT=5.5        -> code DFGIFT, delay 5.5s
+   *                 DELTA-VIP=10      -> code DELTA-VIP, delay 10s
+   *               Mỗi code cũng có thể kèm delay bằng dấu cách ở cuối:
+   *                 DFREWARD 5
+   *                 DFREWARD 5.5
+   *               Nếu không có delay riêng, dùng delay mặc định (popup slider).
    * - ignored:    từ không phải code: ngắn hơn 6 ký tự (G3, AS, VAL...), toàn số, hoặc
    *               chữ có dấu tiếng Việt.
    * - suspicious: trông như code nhưng lẫn chữ Nga/Hy Lạp giống chữ Latin (vd. "DFAXIOм33").
@@ -77,9 +88,34 @@
     const suspicious = [];
     const seen = new Set();
     let duplicates = 0;
-    for (const raw of String(text ?? '').normalize('NFKC').split(/[^\p{L}\p{N}_-]+/u)) {
-      const token = raw.replace(/^[-_]+|[-_]+$/g, '');
+    for (const raw of String(text ?? '').normalize('NFKC').split(/[^\p{L}\p{N}_=.\-]+/u)) {
+      if (!raw) continue;
+
+      // Tách delay nếu có cú pháp "CODE=DELAY"
+      // (Bước split đã loại bỏ khoảng trắng rồi)
+      let token = raw;
+      let delaySec = null;
+      const eqIdx = raw.indexOf('=');
+      if (eqIdx > 0) {
+        const left = raw.slice(0, eqIdx).replace(/[-_]+$/g, '');
+        const right = raw.slice(eqIdx + 1);
+        if (/^\d+(\.\d+)?$/.test(right)) {
+          const n = Number(right);
+          // Delay hợp lệ: 0.5 – 60 giây. Nếu ngoài range thì BỎ phần =DELAY,
+          // để lại phần CODE như là code thường (không áp dụng delay riêng).
+          if (n >= 0.5 && n <= 60) {
+            delaySec = n;
+          }
+          token = left; // luôn lấy phần trước dấu =, bỏ qua phần delay
+        }
+        // Nếu phần sau = không phải số (vd: CODE=A1B2), giữ nguyên token
+        // để rơi vào nhánh suspicious/ignored như code bình thường.
+      }
+
+      // Loại bỏ -/_ đầu cuối đã được xử lý
+      token = token.replace(/^[-_]+|[-_]+$/g, '');
       if (!token) continue;
+
       if (/^[A-Za-z0-9_-]+$/.test(token)) {
         if (!looksLikeCode(token)) {
           ignored.push(token);
@@ -87,10 +123,11 @@
           duplicates += 1;
         } else {
           seen.add(token);
-          codes.push(token);
+          codes.push({ code: token, delaySec });
         }
         continue;
       }
+      // Có ký tự lạ: thử fix lookalikes
       const suggestion = fixLookalikes(token);
       if (suggestion && /[A-Za-z0-9]/.test(token) && looksLikeCode(suggestion)) {
         suspicious.push({ token, suggestion });
@@ -169,6 +206,28 @@
     if (job.logs.length > MAX_LOGS) job.logs.splice(0, job.logs.length - MAX_LOGS);
   }
 
+  /**
+   * Tính tổng thời gian ước tính cho danh sách code, dựa trên delay từng code
+   * (nếu có) hoặc delay mặc định. Cộng thêm thời gian xử lý trung bình mỗi code.
+   *
+   * @param {Array<{code: string, delaySec?: number}>} codes
+   * @param {number} defaultDelayMs - delay mặc định (slider)
+   * @param {number} requestMs - thời gian xử lý trung bình của trang (ms/code)
+   * @returns {number} tổng ms ước tính
+   */
+  function estimateTotalMs(codes, defaultDelayMs, requestMs) {
+    if (!codes || !codes.length) return 0;
+    let total = 0;
+    for (let i = 0; i < codes.length; i++) {
+      const c = codes[i];
+      const delayMs = c.delaySec ? c.delaySec * 1000 : defaultDelayMs;
+      // Code đầu tiên: chỉ cần thời gian xử lý (không cần chờ)
+      // Các code sau: delay + thời gian xử lý
+      total += requestMs + (i === 0 ? 0 : delayMs);
+    }
+    return total;
+  }
+
   function summarize(job) {
     const s = { total: 0, done: 0, pending: 0, success: 0, used: 0, invalid: 0, failed: 0 };
     for (const item of job ? job.items : []) {
@@ -206,6 +265,8 @@
     PAGE_LOCK_MS,
     RESULT_BY_CODE,
     KIND_LABEL,
+    MAX_LOGS,
+    MAX_HISTORY,
     parseCodes,
     clampDelay,
     describeApiResult,
@@ -213,5 +274,6 @@
     pushLog,
     summarize,
     formatSeconds,
+    estimateTotalMs,
   });
 })(globalThis);

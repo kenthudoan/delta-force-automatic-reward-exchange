@@ -1,9 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "Đổi Code Delta Force (tự viết)",
-  "short_name": "Đổi Code DF",
-  "version": "1.0.0",
-  "description": "Tự động nhập và đổi hàng loạt code Delta Force trên trang đổi quà Garena. Chạy cục bộ, không gửi dữ liệu ra ngoài.",
+  "name": "Auto Redeem Code Delta Force - Đổi Code Garena Tự Động",
+  "short_name": "Auto Đổi Code DF",
+  "version": "1.2.1",
+  "description": "Tự động đổi code Delta Force. Delay riêng từng code, lưu lịch sử, xuất CSV, QR Techcombank. Offline, không gửi dữ liệu.",
+  "default_locale": "vi",
   "minimum_chrome_version": "111",
   "permissions": ["storage"],
   "host_permissions": ["https://redeem.df.garena.sg/*"],
@@ -14,7 +15,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Đổi Code Delta Force",
+    "default_title": "Auto Redeem Code Delta Force — Đổi Code Garena",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",
@@ -40,5 +41,7 @@
       "js": ["shared.js", "content.js"],
       "run_at": "document_idle"
     }
-  ]
+  ],
+  "web_accessible_resources": [],
+  "offline_enabled": true
 }

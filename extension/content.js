@@ -22,6 +22,7 @@
     RESULT_TIMEOUT_MS,
     SEND_TIMEOUT_MS,
     PAGE_LOCK_MS,
+    MAX_HISTORY,
     clampDelay,
     describeApiResult,
     describePageMessage,
@@ -29,6 +30,8 @@
     summarize,
     formatSeconds,
   } = globalThis.DFR;
+
+  const HISTORY_KEY = 'dfr.history';
 
   // Các phần tử của trang đổi quà. Nếu Garena đổi giao diện, chỉ cần sửa ở đây.
   const SEL = {
@@ -302,6 +305,29 @@
     log('info', `Hoàn tất ${s.total} code: ${s.success} thành công, ${s.used} đã nhận trước đó, `
       + `${s.invalid} không dùng được, ${s.failed} lỗi.`);
     clearInput();
+    // Lưu vào lịch sử để popup tab "Lịch sử" hiển thị.
+    appendHistory();
+  }
+
+  async function appendHistory() {
+    if (!job || !contextAlive()) return;
+    try {
+      const stored = await chrome.storage.local.get(HISTORY_KEY);
+      const list = Array.isArray(stored[HISTORY_KEY]) ? stored[HISTORY_KEY] : [];
+      const compact = {
+        id: job.id,
+        createdAt: job.createdAt,
+        finishedAt: job.finishedAt || Date.now(),
+        delayMs: job.delayMs,
+        summary: summarize(job),
+        items: job.items.map((it) => ({
+          code: it.code, status: it.status, message: it.message, attempts: it.attempts, at: it.at,
+        })),
+      };
+      list.unshift(compact);
+      list.length = Math.min(list.length, MAX_HISTORY);
+      await chrome.storage.local.set({ [HISTORY_KEY]: list });
+    } catch (_) { /* extension đang tải lại */ }
   }
 
   async function runLoop() {
@@ -376,8 +402,11 @@
         }
         if (pauseRequested) continue;
 
-        const waitMs = willRetry ? job.delayMs * 2 : job.delayMs;
-        job.current = { phase: 'waiting', until: Date.now() + waitMs };
+        // Delay: ưu tiên delay riêng của từng code, fallback về delay mặc định của job.
+        // Retry thì nhân đôi (vì lỗi mạng → chờ lâu hơn trước khi thử lại).
+        const baseDelayMs = item.delayMs != null ? item.delayMs : job.delayMs;
+        const waitMs = willRetry ? baseDelayMs * 2 : baseDelayMs;
+        job.current = { phase: 'waiting', until: Date.now() + waitMs, nextDelayMs: waitMs };
         await saveJob();
         await sleep(waitMs);
       }
@@ -396,8 +425,30 @@
 
   function sanitizeCodes(codes) {
     if (!Array.isArray(codes)) return [];
-    const valid = codes.filter((code) => typeof code === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(code));
-    return [...new Set(valid)].slice(0, 2000);
+    const out = [];
+    const seen = new Set();
+    for (const entry of codes) {
+      // Hỗ trợ cả string thuần (legacy) lẫn object {code, delayMs}
+      let code, delayMs = null;
+      if (typeof entry === 'string') {
+        code = entry;
+      } else if (entry && typeof entry === 'object') {
+        code = entry.code;
+        delayMs = entry.delayMs;
+      }
+      if (typeof code !== 'string' || !/^[A-Za-z0-9_-]{1,40}$/.test(code)) continue;
+      if (seen.has(code)) continue;
+      seen.add(code);
+      // Chuẩn hoá delay: nếu có thì clamp vào khoảng hợp lý (0.5s – 60s)
+      let delay = null;
+      if (Number.isFinite(delayMs)) {
+        const ms = Math.max(500, Math.min(60000, Math.round(delayMs)));
+        delay = ms - ms % 500; // snap về step 500ms
+        if (delay < 500) delay = 500;
+      }
+      out.push({ code, delayMs: delay });
+    }
+    return out.slice(0, 2000);
   }
 
   function createJob(codes, delayMs) {
@@ -407,7 +458,15 @@
       status: 'running',
       tabId: myTabId,
       delayMs: clampDelay(delayMs),
-      items: codes.map((code) => ({ code, status: 'pending', attempts: 0, message: '', resultCode: null, at: 0 })),
+      items: codes.map((entry) => ({
+        code: entry.code,
+        delayMs: entry.delayMs, // null nếu dùng delay mặc định
+        status: 'pending',
+        attempts: 0,
+        message: '',
+        resultCode: null,
+        at: 0,
+      })),
       logs: [],
       current: null,
       pauseReason: '',

@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chính sách quyền riêng tư — Auto Redeem Code Delta Force</title>
+<style>
+  :root {
+    --accent: #ff8c1a;
+    --accent-hover: #ff7a08;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --bg: #f8fafc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  header {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+  }
+  .summary {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 4px solid #10b981;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+  }
+  .summary b { color: #047857; }
+  h2 {
+    font-size: 19px;
+    margin: 40px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  h3 {
+    font-size: 16px;
+    margin: 24px 0 8px;
+    color: #111827;
+  }
+  p { margin: 0 0 12px; }
+  ul { padding-left: 22px; }
+  li { margin: 4px 0; }
+  code {
+    background: #f3f4f6;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 13.5px;
+    color: #b91c1c;
+    font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+  }
+  footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .repo-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .repo-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">🛡️ Privacy Policy</span>
+    <h1>Chính sách quyền riêng tư</h1>
+    <p class="subtitle">Auto Redeem Code Delta Force — Đổi Code Garena Tự Động<br>
+    Phiên bản 1.2.1 · Cập nhật lần cuối: 25/09/2026</p>
+  </header>
+
+  <div class="summary">
+    <b>Tóm tắt một dòng:</b> extension <b>không thu thập</b>, <b>không lưu trữ trên server</b>,
+    <b>không truyền tải</b> bất kỳ dữ liệu nào ra ngoài máy của bạn.
+  </div>
+
+  <h2>1. Dữ liệu extension thu thập</h2>
+  <p><b>Không có.</b> Extension không có máy chủ backend, không có analytics, không có
+  telemetry, không có crash report tự động, không có quảng cáo, không có công cụ theo dõi.</p>
+
+  <h2>2. Dữ liệu extension lưu trên máy bạn</h2>
+  <p>Extension dùng <code>chrome.storage.local</code> để lưu các thông tin sau, <b>chỉ trên máy bạn</b>:</p>
+
+  <table>
+    <thead>
+      <tr><th>Khoá</th><th>Nội dung</th><th>Thời gian lưu</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>dfr.settings</code></td>
+        <td>Thời gian chờ mặc định, bản nháp code chưa gửi</td>
+        <td>Cho tới khi bạn xoá</td>
+      </tr>
+      <tr>
+        <td><code>dfr.job</code></td>
+        <td>Tiến trình đang chạy (code, trạng thái, log)</td>
+        <td>Cho tới khi bấm "Làm mới"</td>
+      </tr>
+      <tr>
+        <td><code>dfr.history</code></td>
+        <td>30 job gần nhất (tóm tắt + items)</td>
+        <td>Cho tới khi bấm "Xoá tất cả"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Bạn có thể xoá mọi dữ liệu bằng cách gỡ extension, hoặc dùng nút <b>Xoá tất cả</b>
+  trong tab <b>Lịch sử</b>.</p>
+
+  <h2>3. Quyền truy cập</h2>
+  <p>Extension xin 2 quyền trong <code>manifest.json</code>:</p>
+  <ul>
+    <li><b><code>storage</code></b> — để lưu cài đặt và lịch sử trên máy bạn (xem bảng trên).</li>
+    <li><b><code>host_permissions: ["https://redeem.df.garena.sg/*"]</code></b> — để chỉ chạy
+      content script trên trang đổi quà chính thức của Garena. Extension <b>không</b>
+      hoạt động trên bất kỳ trang web nào khác.</li>
+  </ul>
+
+  <h2>4. Truy cập mạng</h2>
+  <p>Extension <b>không gọi</b> bất kỳ API bên ngoài nào:</p>
+  <ul>
+    <li>Content script mô phỏng thao tác người dùng (điền ô input, click nút) trên
+      trang đổi quà — không bypass API.</li>
+    <li>Service worker chỉ đếm giờ (<code>setTimeout</code>), không có <code>fetch</code>.</li>
+    <li>QR Donate tạo bằng thư viện JavaScript nhúng sẵn, không gọi API tạo QR.</li>
+    <li>CSP <code>connect-src 'none'</code> chặn mọi kết nối mạng từ extension pages.</li>
+  </ul>
+
+  <h2>5. Cookie và mật khẩu</h2>
+  <p>Extension <b>không đọc</b> cookie, session token, hay bất kỳ thông tin đăng nhập nào.
+  Bạn đăng nhập Garena trực tiếp trên trang đổi quà — extension không can thiệp.</p>
+
+  <h2>6. Dữ liệu người dùng nhập vào extension</h2>
+  <p>Khi bạn dán danh sách code vào popup, những code đó:</p>
+  <ul>
+    <li>Được xử lý cục bộ bởi JavaScript của extension.</li>
+    <li>Được gửi tới <code>redeem.df.garena.sg</code> theo đúng thao tác người dùng gõ tay
+      (đây là request mà bạn vẫn gửi khi dùng trang web bình thường).</li>
+    <li><b>Không được gửi tới bất kỳ máy chủ nào khác</b>.</li>
+  </ul>
+
+  <h2>7. Trẻ em</h2>
+  <p>Extension không hướng tới trẻ em dưới 13 tuối và không thu thập bất kỳ dữ liệu
+  nào của trẻ em.</p>
+
+  <h2>8. Thay đổi chính sách</h2>
+  <p>Nếu chính sách thay đổi, bạn sẽ thấy trong file <code>CHANGELOG.md</code> của repo.
+  Phiên bản mới sẽ giữ nguyên triết lý "không gửi dữ liệu ra ngoài".</p>
+
+  <h2>9. Liên hệ</h2>
+  <p>Mọi câu hỏi về quyền riêng tư, vui lòng mở issue tại
+  <a class="repo-link" href="https://github.com/kenthudoan/delta-force-automatic-reward-exchange/issues" target="_blank" rel="noopener">GitHub Issues</a>
+  hoặc liên hệ tác giả qua email đăng ký trên trang Chrome Web Store.</p>
+
+  <footer>
+    <p>© 2026 Dylan Tran · <a class="repo-link" href="https://github.com/kenthudoan/delta-force-automatic-reward-exchange" target="_blank" rel="noopener">Source code</a></p>
+    <p>Tài liệu này được tạo tự động từ <code>PRIVACY.md</code> trong repository.</p>
+  </footer>
+</div>
+</body>
+</html>

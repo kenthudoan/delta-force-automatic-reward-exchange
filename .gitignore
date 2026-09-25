@@ -1,12 +1,19 @@
 # thư viện cài bằng npm
 node_modules/
 
-# file và thư mục ẩn do hệ điều hành, editor, công cụ lập trình tạo ra (chỉ giữ .gitignore)
-.*
-!.gitignore
+# build artifacts & screenshots debug (chỉ giữ store-* trong tests/)
+dist/
+*.zip
+*.crx
+*.xpi
 
 # log
 *.log
 
 # danh sách code cá nhân: không đưa lên git
 code-*.txt
+
+# file tạm
+*.tmp
+.DS_Store
+Thumbs.db

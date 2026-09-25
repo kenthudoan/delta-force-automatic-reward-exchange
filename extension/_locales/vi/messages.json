@@ -1,0 +1,14 @@
+{
+  "extension_name": {
+    "message": "Auto Redeem Code Delta Force - Đổi Code Garena Tự Động",
+    "description": "Tên hiển thị của extension. Tối ưu SEO cho tìm kiếm Chrome Web Store."
+  },
+  "extension_short_name": {
+    "message": "Auto Đổi Code DF",
+    "description": "Tên ngắn hiển thị khi extension bị thu gọn."
+  },
+  "extension_description": {
+    "message": "Tự động đổi code Delta Force. Delay riêng từng code, lưu lịch sử, xuất CSV, QR Techcombank. Offline, không gửi dữ liệu.",
+    "description": "Mô tả extension."
+  }
+}
