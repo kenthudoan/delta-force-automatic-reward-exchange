@@ -1,0 +1,15 @@
+{
+  "name": "df-redeem-extension-tests",
+  "private": true,
+  "type": "module",
+  "description": "Kiểm thử cho extension. Không cần cho việc sử dụng extension.",
+  "scripts": {
+    "test": "node --test parse.test.mjs && node e2e.mjs",
+    "test:parse": "node --test parse.test.mjs",
+    "test:e2e": "node e2e.mjs",
+    "icons": "node make-icons.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "25.12.0"
+  }
+}

@@ -1,0 +1,12 @@
+# thư viện cài bằng npm
+node_modules/
+
+# file và thư mục ẩn do hệ điều hành, editor, công cụ lập trình tạo ra (chỉ giữ .gitignore)
+.*
+!.gitignore
+
+# log
+*.log
+
+# danh sách code cá nhân: không đưa lên git
+code-*.txt
