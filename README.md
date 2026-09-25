@@ -3,7 +3,7 @@
 > Chrome extension tự động đổi hàng loạt code Delta Force trên trang đổi quà Garena.
 > Chạy hoàn toàn trên máy bạn — không gửi dữ liệu đi đâu.
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.2.1-blue.svg)]()
 [![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-green.svg)]()
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Offline](https://img.shields.io/badge/network-offline-success.svg)]()
@@ -81,7 +81,7 @@ Code có delay ngoài khoảng sẽ được giữ lại và dùng delay mặc �
 | Trang bị tải lại / hết phiên | Extension tự tạm dừng. Đăng nhập lại → bấm **Tiếp tục**. |
 | "Trang chưa kết nối" | Tải lại trang đổi quà (`F5`). |
 | Lỗi mạng nhiều lần | Extension tự tạm dừng sau 5 lần lỗi liên tiếp. Chờ vài phút → **Tiếp tục**. |
-| Không nhận ra giao diện trang | Garena có thể đã đổi DOM. Báo lỗi tại <https://github.com/.../issues>. |
+| Không nhận ra giao diện trang | Garena có thể đã đổi DOM. Báo lỗi tại <https://github.com/kenthudoan/delta-force-automatic-reward-exchange/issues>. |
 | Code lỗi sau khi đổi | Mở tab **Lịch sử** → bấm **Thử lại** bên job đó. |
 
 ## Quyền hạn
@@ -107,7 +107,7 @@ Chi tiết: xem file [`PRIVACY.md`](PRIVACY.md).
 
 ## Đóng góp
 
-Báo lỗi, góp ý, hoặc gửi Pull Request tại <https://github.com/...>.
+Báo lỗi, góp ý, hoặc gửi Pull Request tại <https://github.com/kenthudoan/delta-force-automatic-reward-exchange/issues>.
 
 Khi báo lỗi, vui lòng kèm:
 - Phiên bản Chrome (`chrome://version`).
