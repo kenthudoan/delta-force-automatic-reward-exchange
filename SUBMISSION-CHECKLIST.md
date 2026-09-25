@@ -56,15 +56,13 @@ Tiện ích (Productivity)
 
 ### URL trang chủ (Homepage URL)
 ```
-https://github.com/<user>/delta-force-automatic-reward-exchange
+https://github.com/kenthudoan/delta-force-automatic-reward-exchange
 ```
-*(Sửa user thật của bạn. Nếu chưa có repo public, có thể để trống — không bắt buộc)*
 
 ### URL hỗ trợ (Support URL)
 ```
-https://github.com/<user>/delta-force-automatic-reward-exchange/issues
+https://github.com/kenthudoan/delta-force-automatic-reward-exchange/issues
 ```
-*(Cùng chỗ với homepage, trỏ vào tab Issues)*
 
 ### Nội dung người lớn (Adult content)
 ```
@@ -89,7 +87,8 @@ Khi Chrome hỏi, bạn xác nhận:
 
 ## 8. Bước submit
 1. Vào https://chrome.google.com/webstore/devconsole/
-2. Click vào item `bflkabakmcafnnlbmnifpdpolponabkn` (đang ở Bản nháp)
+2. Chọn item đang ở Bản nháp (Draft) — hoặc **+ New Item** nếu chưa tạo.
+   - Extension ID hiện không thể thay đổi sau khi tạo, nhớ ghi ra giấy.
 3. Tab **Package** → Upload `auto-redeem-code-delta-force-1.2.1.zip` → Save
 4. Tab **Store listing** → copy-paste các trường ở mục 2
 5. Tab **Store listing** → mục Graphic assets → upload 5 screenshots (mục 4) + icon (mục 3) + tiles (mục 5)
